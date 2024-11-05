@@ -1,0 +1,126 @@
+.hero {
+  height: calc(99vh - 130px);
+  width: 100%;
+  background: linear-gradient(180deg, #fde1ff, #e1ffea22 60%);
+  display: flex;
+  margin: auto;
+  padding: 0 2vw;
+  box-sizing: border-box;
+  border-radius: 0 0 15px 15px;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.hero-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4vh;
+  /* Use viewport height for vertical spacing */
+  padding-left: 10%;
+  line-height: 1.1;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  /* Prevents content from overflowing the container */
+}
+
+.hero-left h2 {
+  color: #090909;
+  font-size: min(3vw, 3vh);
+  font-weight: 600;
+}
+
+.hero-left p {
+  color: #171717;
+  font-size: min(8vw, 10vh);
+  /* Adjust to ensure scaling with viewport height */
+  font-weight: 700;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.hero-hand-icon {
+  display: flex;
+  align-items: center;
+  gap: 1vw;
+}
+
+.hero-hand-icon img {
+  width: 5vh;
+  /* Scale image size based on viewport height */
+  max-width: 105px;
+}
+
+.hero-latest-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1vw;
+  width: min(30vw, 30vh);
+  max-width: 300px;
+  height: 8vh;
+  border-radius: 50px;
+  margin-top: 30px;
+  background: #ff4141;
+  color: white;
+  font-size: min(2vw, 2vh);
+  /* Responsive font size based on height */
+  font-weight: 600;
+  padding: 0 10%;
+  box-sizing: border-box;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.hero-latest-btn:hover {
+  background-color: #d93333;
+  transform: scale(1.05);
+}
+
+.hero-latest-btn div {
+  display: flex;
+  align-items: center;
+  gap: 0.5vw;
+}
+
+.hero-latest-btn img {
+  width: 3vh;
+  /* Scale icon size based on viewport height */
+  max-width: 25px;
+}
+
+.hero-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-height: 100%;
+  /* Prevent hero-right content from exceeding the container height */
+}
+
+.hero-right img {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+  max-height: 100%;
+  /* Ensure the image fits within the container */
+}
+
+/* Media Query for Small Heights */
+@media (max-height: 600px) or (max-width: 1300px){
+  .hero-left h2 {
+    font-size:min(3vw, 3vh);
+  }
+
+  .hero-left p {
+    font-size: min(6vw, 8.5vh);
+  }
+
+  .hero-latest-btn {
+    height: 7vh;
+    font-size: 1.8vh;
+  }
+}
