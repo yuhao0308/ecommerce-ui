@@ -21,18 +21,29 @@ const ProductDisplay = (props) => {
       setIsBouncing(false);
     }, 300); // Duration matches the animation time in CSS
   };
+  
+  // Handle image loading errors
+  const handleImageError = (e) => {
+    e.target.onerror = null; // Prevent infinite loop
+    e.target.src = 'https://via.placeholder.com/350?text=No+Image';
+  };
 
   return (
     <div className="productdisplay">
       <div className="productdisplay-left">
         <div className="productdisplay-img-list">
-          <img src={formatImageUrl(product.image)} alt="" />
-          <img src={formatImageUrl(product.image)} alt="" />
-          <img src={formatImageUrl(product.image)} alt="" />
-          <img src={formatImageUrl(product.image)} alt="" />
+          <img src={formatImageUrl(product.image)} alt="" onError={handleImageError} />
+          <img src={formatImageUrl(product.image)} alt="" onError={handleImageError} />
+          <img src={formatImageUrl(product.image)} alt="" onError={handleImageError} />
+          <img src={formatImageUrl(product.image)} alt="" onError={handleImageError} />
         </div>
         <div className="productdisplay-img">
-          <img className="productdisplay-main-img" src={formatImageUrl(product.image)} alt="" />
+          <img 
+            className="productdisplay-main-img" 
+            src={formatImageUrl(product.image)} 
+            alt={product.name || "Product"} 
+            onError={handleImageError} 
+          />
         </div>
       </div>
       <div className="productdisplay-right">

@@ -25,6 +25,12 @@ const CartItems = () => {
       await removeFromCart(item._id);
     }
   };
+  
+  // Handle image loading errors
+  const handleImageError = (e) => {
+    e.target.onerror = null; // Prevent infinite loop
+    e.target.src = 'https://via.placeholder.com/100?text=No+Image';
+  };
 
   return (
     <div className="cart-items">
@@ -44,6 +50,7 @@ const CartItems = () => {
               src={formatImageUrl(item.product.image)}
               alt={item.product.name}
               className="cart-product-image"
+              onError={handleImageError}
             />
             <p>{item.product.name}</p>
             <p>${item.product.new_price}</p>
