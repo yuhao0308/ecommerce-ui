@@ -1,13 +1,14 @@
 import React from 'react'
 import "./Item.css"
 import {Link} from 'react-router-dom'
+import { formatImageUrl } from '../../utils/imageHelpers'
 
 const Item = (props) => {
   return (
     <div className="item">
       <div className="img-container">
         <Link to={`/product/${props.id}`}>
-          <img src={props.image} alt=""/>
+          <img src={formatImageUrl(props.image)} alt=""/>
         </Link>
       </div>
       <p>{props.name}</p>

@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import './CartItems.css';
 import { ShopContext } from '../../Context/ShopContext';
 import remove_icon from '../Assets/cart_cross_icon.png';
+import { formatImageUrl } from '../../utils/imageHelpers';
 
 const CartItems = () => {
   const {
@@ -40,7 +41,7 @@ const CartItems = () => {
         <div key={item._id}>
           <div className="cart-items-row cart-items-grid">
             <img
-              src={item.product.image}
+              src={formatImageUrl(item.product.image)}
               alt={item.product.name}
               className="cart-product-image"
             />
