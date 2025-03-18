@@ -6,7 +6,10 @@ import { API_URL } from '../config';
  * @returns {string} - The formatted image URL
  */
 export const formatImageUrl = (imageUrl) => {
-  if (!imageUrl) return '';
+  if (!imageUrl) {
+    // Return a base64 encoded transparent 1x1 pixel as fallback
+    return 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+  }
   
   // If it's already an absolute URL, return it as is
   if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
