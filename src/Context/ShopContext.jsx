@@ -11,9 +11,26 @@ const ShopContextProvider = (props) => {
   // Fetch all products
   const fetchAllProducts = async () => {
     try {
+      console.log('Fetching products from:', `${API_URL}/products`);
       const response = await fetch(`${API_URL}/products`);
       const data = await response.json();
       if (data.success) {
+        console.log(`Successfully fetched ${data.products?.length || 0} products`);
+        
+        // Log category distribution
+        const categories = {};
+        data.products?.forEach(product => {
+          if (product.category) {
+            if (!categories[product.category]) {
+              categories[product.category] = 0;
+            }
+            categories[product.category]++;
+          } else {
+            console.warn('Product missing category:', product._id, product.name);
+          }
+        });
+        console.log('Category distribution:', categories);
+        
         setAllProducts(data.products || []);
       } else {
         console.error('Error fetching products:', data.message);
