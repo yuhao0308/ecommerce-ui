@@ -16,17 +16,29 @@ const ShopCategory = (props) => {
     const fetchDirectFromApi = async () => {
       try {
         console.log(`Directly fetching category '${props.category}' from API`);
-        const response = await fetch(`${API_URL}/products?category=${props.category}`);
+        
+        // Fetch all products and filter manually if there might be case sensitivity issues
+        const response = await fetch(`${API_URL}/products`);
         const data = await response.json();
         
         if (data.success && data.products) {
-          console.log(`API returned ${data.products.length} products for category '${props.category}'`);
-          setDirectApiProducts(data.products);
+          console.log(`API returned ${data.products.length} total products`);
+          
+          // Filter products by category (case-insensitive) manually
+          const filtered = data.products.filter(product => 
+            product.category && 
+            product.category.toLowerCase() === props.category.toLowerCase()
+          );
+          
+          console.log(`After manual filtering: ${filtered.length} products match category '${props.category}'`);
+          console.log('Category values found:', filtered.map(p => p.category));
+          
+          setDirectApiProducts(filtered);
           
           // If no products found in context but API has products, use the API products
-          if (categoryProducts.length === 0 && data.products.length > 0) {
-            console.log('Using products from direct API call');
-            setCategoryProducts(data.products);
+          if (categoryProducts.length === 0 && filtered.length > 0) {
+            console.log('Using products from direct API call with manual filtering');
+            setCategoryProducts(filtered);
           }
         } else {
           console.error('Error fetching direct from API:', data.message);
@@ -47,19 +59,34 @@ const ShopCategory = (props) => {
     const categories = allProducts.map(p => p.category);
     console.log("Available categories:", [...new Set(categories)]);
     
-    // Filter products by category (case-insensitive)
+    // Filter products by category (case-insensitive) and log results by category
     const filtered = allProducts.filter(item => 
       item.category && props.category && 
       item.category.toLowerCase() === props.category.toLowerCase()
     );
     
+    // Additional debugging for the current category
+    console.log(`Current category: "${props.category}"`);
     console.log(`Found ${filtered.length} products for category "${props.category}"`);
+    if (filtered.length > 0) {
+      console.log(`First few products in ${props.category} category:`, 
+        filtered.slice(0, 3).map(p => ({ name: p.name, category: p.category, id: p._id }))
+      );
+    }
+    
     setCategoryProducts(filtered);
     setIsLoading(false);
   }, [allProducts, props.category]);
 
-  // Use products from either context or direct API call
-  const productsToDisplay = categoryProducts.length > 0 ? categoryProducts : directApiProducts;
+  // Ensure we're only displaying products that match the current category
+  // Double-check with an additional filter
+  const productsToDisplay = categoryProducts.length > 0 
+    ? categoryProducts.filter(item => 
+        item.category && 
+        item.category.toLowerCase() === props.category.toLowerCase())
+    : directApiProducts.filter(item => 
+        item.category && 
+        item.category.toLowerCase() === props.category.toLowerCase());
 
   return (
     <div className="shop-category">
