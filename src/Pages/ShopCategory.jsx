@@ -10,6 +10,46 @@ const ShopCategory = (props) => {
   const [categoryProducts, setCategoryProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Component mount debug
+  useEffect(() => {
+    console.log('ShopCategory mounted with props:', {
+      category: props.category,
+      type: typeof props.category,
+      length: props.category ? props.category.length : 0,
+      charCodes: props.category ? Array.from(props.category).map(c => c.charCodeAt(0)) : []
+    });
+    
+    // Debug API config
+    console.log('API_URL:', API_URL);
+    
+    // Try a raw fetch to see production data
+    fetch(`${API_URL}/products`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          const catCounts = {};
+          data.products.forEach(p => {
+            if (p.category) {
+              const cat = p.category.toLowerCase();
+              catCounts[cat] = (catCounts[cat] || 0) + 1;
+            }
+          });
+          console.log('Categories in API:', catCounts);
+          
+          // Log some sample products
+          const samplesMap = {};
+          Object.keys(catCounts).forEach(cat => {
+            samplesMap[cat] = data.products
+              .filter(p => p.category && p.category.toLowerCase() === cat)
+              .slice(0, 1)
+              .map(p => ({ id: p._id, name: p.name, category: p.category }));
+          });
+          console.log('Sample products by category:', samplesMap);
+        }
+      })
+      .catch(err => console.error('Error in raw fetch:', err));
+  }, [props.category]);
+  
   // Simplified approach - fetch and filter products
   useEffect(() => {
     const fetchProducts = async () => {
@@ -19,8 +59,8 @@ const ShopCategory = (props) => {
         
         // First try filtering from context
         const contextFiltered = allProducts.filter(item => 
-          item.category && 
-          item.category.toLowerCase() === props.category.trim().toLowerCase()
+          item.category && props.category &&
+          item.category.toLowerCase().trim() === props.category.toLowerCase().trim()
         );
         
         console.log(`Found ${contextFiltered.length} matching products in context`);
@@ -40,10 +80,23 @@ const ShopCategory = (props) => {
         if (data.success && data.products) {
           console.log(`API returned ${data.products.length} total products`);
           
-          // Filter by category
+          // Log exact category values for comparison
+          if (props.category) {
+            console.log('Expected category:', {
+              raw: props.category,
+              lower: props.category.toLowerCase(),
+              trimmed: props.category.trim(),
+              lowerTrimmed: props.category.toLowerCase().trim()
+            });
+            
+            const sampleCategories = [...new Set(data.products.map(p => p.category))].slice(0, 10);
+            console.log('Sample categories from API:', sampleCategories);
+          }
+          
+          // Filter by category with very loose matching to diagnose issues
           const apiFiltered = data.products.filter(product => 
-            product.category && 
-            product.category.toLowerCase() === props.category.toLowerCase()
+            product.category && props.category &&
+            product.category.toLowerCase().trim() === props.category.toLowerCase().trim()
           );
           
           console.log(`After filtering: ${apiFiltered.length} products match category '${props.category}'`);
@@ -74,6 +127,12 @@ const ShopCategory = (props) => {
   return (
     <div className="shop-category">
       <img src={props.banner} alt="Category Banner" className="shop-category-banner"/>
+      
+      {/* Debug Banner */}
+      <div className="debug-info" style={{margin: '10px', padding: '10px', background: '#f0f0f0', display: 'none'}}>
+        <p>Category: "{props.category}"</p>
+        <p>Products found: {categoryProducts.length}</p>
+      </div>
 
       <div className="shop-category-index-sort">
         {/* Page Index */}
@@ -107,6 +166,7 @@ const ShopCategory = (props) => {
           <div className="no-products-message">
             <h3>No products found in this category</h3>
             <p>We're working on adding new products to this category. Please check back soon!</p>
+            <p style={{fontSize: '12px', color: '#999'}}>Category: "{props.category}"</p>
           </div>
         )}
       </div>
