@@ -45,7 +45,7 @@ const Product = () => {
       <Breadcrumb product={product} />
       <ProductDisplay product={product} />
       <DescriptionBox />
-      <RelatedProducts />
+      <RelatedProducts currentProduct={product} />
     </>
   );
 };
