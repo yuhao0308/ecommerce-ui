@@ -9,84 +9,67 @@ const ShopCategory = (props) => {
   const { allProducts } = useContext(ShopContext);
   const [categoryProducts, setCategoryProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [directApiProducts, setDirectApiProducts] = useState([]);
 
-  // Direct API check - as a backup solution
+  // Simplified approach - fetch and filter products
   useEffect(() => {
-    const fetchDirectFromApi = async () => {
+    const fetchProducts = async () => {
       try {
-        console.log(`Directly fetching category '${props.category}' from API`);
+        console.log(`Fetching products for category '${props.category}'`);
+        console.log('Context products count:', allProducts.length);
         
-        // Fetch all products and filter manually if there might be case sensitivity issues
+        // First try filtering from context
+        const contextFiltered = allProducts.filter(item => 
+          item.category && 
+          item.category.toLowerCase() === props.category.toLowerCase()
+        );
+        
+        console.log(`Found ${contextFiltered.length} matching products in context`);
+        
+        // If we found products in context, use those
+        if (contextFiltered.length > 0) {
+          setCategoryProducts(contextFiltered);
+          setIsLoading(false);
+          return;
+        }
+        
+        // Otherwise fetch directly from API
+        console.log('Fetching from API as fallback');
         const response = await fetch(`${API_URL}/products`);
         const data = await response.json();
         
         if (data.success && data.products) {
           console.log(`API returned ${data.products.length} total products`);
           
-          // Filter products by category (case-insensitive) manually
-          const filtered = data.products.filter(product => 
+          // Filter by category
+          const apiFiltered = data.products.filter(product => 
             product.category && 
             product.category.toLowerCase() === props.category.toLowerCase()
           );
           
-          console.log(`After manual filtering: ${filtered.length} products match category '${props.category}'`);
-          console.log('Category values found:', filtered.map(p => p.category));
-          
-          setDirectApiProducts(filtered);
-          
-          // If no products found in context but API has products, use the API products
-          if (categoryProducts.length === 0 && filtered.length > 0) {
-            console.log('Using products from direct API call with manual filtering');
-            setCategoryProducts(filtered);
+          console.log(`After filtering: ${apiFiltered.length} products match category '${props.category}'`);
+          if (apiFiltered.length > 0) {
+            console.log('Sample products:', apiFiltered.slice(0, 2).map(p => ({
+              id: p._id,
+              name: p.name,
+              category: p.category
+            })));
           }
+          
+          setCategoryProducts(apiFiltered);
         } else {
-          console.error('Error fetching direct from API:', data.message);
+          console.error('Error fetching from API:', data.message);
+          setCategoryProducts([]);
         }
       } catch (error) {
-        console.error('Error in direct API fetch:', error);
+        console.error('Error fetching products:', error);
+        setCategoryProducts([]);
+      } finally {
+        setIsLoading(false);
       }
     };
     
-    if (isLoading && allProducts.length > 0) {
-      fetchDirectFromApi();
-    }
-  }, [props.category, isLoading, allProducts.length, categoryProducts.length]);
-
-  useEffect(() => {
-    // Log all products and categories for debugging
-    console.log("All products:", allProducts);
-    const categories = allProducts.map(p => p.category);
-    console.log("Available categories:", [...new Set(categories)]);
-    
-    // Filter products by category (case-insensitive) and log results by category
-    const filtered = allProducts.filter(item => 
-      item.category && props.category && 
-      item.category.toLowerCase() === props.category.toLowerCase()
-    );
-    
-    // Additional debugging for the current category
-    console.log(`Current category: "${props.category}"`);
-    console.log(`Found ${filtered.length} products for category "${props.category}"`);
-    if (filtered.length > 0) {
-      console.log(`First few products in ${props.category} category:`, 
-        filtered.slice(0, 3).map(p => ({ name: p.name, category: p.category, id: p._id }))
-      );
-    }
-    
-    setCategoryProducts(filtered);
-    setIsLoading(false);
-  }, [allProducts, props.category]);
-
-  // Ensure we're only displaying products that match the current category
-  // Double-check with an additional filter
-  const productsToDisplay = categoryProducts.length > 0 
-    ? categoryProducts.filter(item => 
-        item.category && 
-        item.category.toLowerCase() === props.category.toLowerCase())
-    : directApiProducts.filter(item => 
-        item.category && 
-        item.category.toLowerCase() === props.category.toLowerCase());
+    fetchProducts();
+  }, [props.category, allProducts]);
 
   return (
     <div className="shop-category">
@@ -95,7 +78,7 @@ const ShopCategory = (props) => {
       <div className="shop-category-index-sort">
         {/* Page Index */}
         <p>
-          <span>Showing {productsToDisplay.length}</span> out of {productsToDisplay.length} products
+          <span>Showing {categoryProducts.length}</span> out of {categoryProducts.length} products
         </p>
 
         {/* Sort By */}
@@ -109,8 +92,8 @@ const ShopCategory = (props) => {
       <div className="shop-category-products">
         {isLoading ? (
           <div className="loading-message">Loading products...</div>
-        ) : productsToDisplay.length > 0 ? (
-          productsToDisplay.map((item) => (
+        ) : categoryProducts.length > 0 ? (
+          categoryProducts.map((item) => (
             <Item 
               key={item._id} 
               id={item._id} 
@@ -129,7 +112,7 @@ const ShopCategory = (props) => {
       </div>
 
       {/* Load More Button */}
-      {productsToDisplay.length > 0 && (
+      {categoryProducts.length > 0 && (
         <div className="shop-category-load-more">
           Explore More
         </div>
