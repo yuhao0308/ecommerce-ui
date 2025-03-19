@@ -7,6 +7,14 @@
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.item-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .img-container {
@@ -40,18 +48,35 @@
   margin: 0;
 }
 
-.item p {
-  margin: 10px 0px;
-  font-size: 18px;
+.item-details {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  justify-content: space-between;
+  min-height: 90px; /* Ensures consistent height for the details section */
+}
+
+.item-name {
+  margin: 0 0 10px 0;
+  font-size: 16px;
   font-weight: 500;
   color: #1f2937;
   text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* Limit to 2 lines */
+  -webkit-box-orient: vertical;
+  line-height: 1.3;
+  height: 2.6em; /* Fixed height for 2 lines */
 }
 
 .item-prices {
   display: flex;
   justify-content: center;
   gap: 15px;
+  margin-top: auto; /* Pushes prices to the bottom */
 }
 
 .item-price-new {

@@ -31,28 +31,28 @@ const Item = (props) => {
 
   return (
     <div className="item">
-      <div className="img-container">
+      <div className="item-content">
         <Link to={`/product/${props.id}`}>
-          {!imgError ? (
-            <img 
-              src={imageSrc} 
-              alt={props.name || "Product Item"}
-              onError={handleImageError}
-            />
-          ) : (
-            <div className="error-placeholder">
-              <p>{props.name}</p>
-            </div>
-          )}
+          <div className="img-container">
+            {!imgError && imageSrc ? (
+              <img src={imageSrc} alt={props.name} onError={() => setImgError(true)} />
+            ) : (
+              <div className="error-placeholder">
+                <p>Image not available</p>
+              </div>
+            )}
+          </div>
         </Link>
-      </div>
-      <p>{props.name}</p>
-      <div className="item-prices">
-        <div className="item-price-new">
-          ${props.new_price}
-        </div>
-        <div className="item-price-old">
-          ${props.old_price}
+        <div className="item-details">
+          <h3 className="item-name" title={props.name}>{props.name}</h3>
+          <div className="item-prices">
+            <div className="item-price-new">
+              ${props.new_price}
+            </div>
+            <div className="item-price-old">
+              ${props.old_price}
+            </div>
+          </div>
         </div>
       </div>
     </div>
