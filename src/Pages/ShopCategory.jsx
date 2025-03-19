@@ -1,116 +1,72 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './CSS/ShopCategory.css'
-import { ShopContext } from '../Context/ShopContext'
 import dropdown_icon from '../Components/Assets/dropdown_icon.png'
 import Item from '../Components/Item/Item';
 import { API_URL } from '../config';
 
 const ShopCategory = (props) => {
-  const { allProducts } = useContext(ShopContext);
   const [categoryProducts, setCategoryProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Component mount debug
+  // Direct fetch approach without context
   useEffect(() => {
-    console.log('ShopCategory mounted with props:', {
-      category: props.category,
-      type: typeof props.category,
-      length: props.category ? props.category.length : 0,
-      charCodes: props.category ? Array.from(props.category).map(c => c.charCodeAt(0)) : []
-    });
-    
-    // Debug API config
-    console.log('API_URL:', API_URL);
-    
-    // Try a raw fetch to see production data
-    fetch(`${API_URL}/products`)
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          const catCounts = {};
-          data.products.forEach(p => {
-            if (p.category) {
-              const cat = p.category.toLowerCase();
-              catCounts[cat] = (catCounts[cat] || 0) + 1;
-            }
-          });
-          console.log('Categories in API:', catCounts);
-          
-          // Log some sample products
-          const samplesMap = {};
-          Object.keys(catCounts).forEach(cat => {
-            samplesMap[cat] = data.products
-              .filter(p => p.category && p.category.toLowerCase() === cat)
-              .slice(0, 1)
-              .map(p => ({ id: p._id, name: p.name, category: p.category }));
-          });
-          console.log('Sample products by category:', samplesMap);
-        }
-      })
-      .catch(err => console.error('Error in raw fetch:', err));
-  }, [props.category]);
-  
-  // Simplified approach - fetch and filter products
-  useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchAllProducts = async () => {
       try {
-        console.log(`Fetching products for category '${props.category}'`);
-        console.log('Context products count:', allProducts.length);
+        setIsLoading(true);
         
-        // First try filtering from context
-        const contextFiltered = allProducts.filter(item => 
-          item.category && props.category &&
-          item.category.toLowerCase().trim() === props.category.toLowerCase().trim()
-        );
-        
-        console.log(`Found ${contextFiltered.length} matching products in context`);
-        
-        // If we found products in context, use those
-        if (contextFiltered.length > 0) {
-          setCategoryProducts(contextFiltered);
-          setIsLoading(false);
-          return;
-        }
-        
-        // Otherwise fetch directly from API
-        console.log('Fetching from API as fallback');
+        // Always fetch directly from API for most reliable results
         const response = await fetch(`${API_URL}/products`);
         const data = await response.json();
         
-        if (data.success && data.products) {
+        if (data.success && data.products && data.products.length > 0) {
           console.log(`API returned ${data.products.length} total products`);
           
-          // Log exact category values for comparison
-          if (props.category) {
-            console.log('Expected category:', {
-              raw: props.category,
-              lower: props.category.toLowerCase(),
-              trimmed: props.category.trim(),
-              lowerTrimmed: props.category.toLowerCase().trim()
-            });
-            
-            const sampleCategories = [...new Set(data.products.map(p => p.category))].slice(0, 10);
-            console.log('Sample categories from API:', sampleCategories);
-          }
-          
-          // Filter by category with very loose matching to diagnose issues
-          const apiFiltered = data.products.filter(product => 
-            product.category && props.category &&
-            product.category.toLowerCase().trim() === props.category.toLowerCase().trim()
+          // Try case-insensitive contains match instead of exact match
+          const matchingProducts = data.products.filter(product => 
+            product.category && 
+            product.category.toLowerCase().includes(props.category.toLowerCase())
           );
           
-          console.log(`After filtering: ${apiFiltered.length} products match category '${props.category}'`);
-          if (apiFiltered.length > 0) {
-            console.log('Sample products:', apiFiltered.slice(0, 2).map(p => ({
-              id: p._id,
-              name: p.name,
-              category: p.category
-            })));
-          }
+          console.log(`Found ${matchingProducts.length} products matching category '${props.category}'`);
           
-          setCategoryProducts(apiFiltered);
+          if (matchingProducts.length > 0) {
+            setCategoryProducts(matchingProducts);
+          } else {
+            // Try a more flexible matching approach
+            console.log("Trying flexible matching...");
+            
+            // For 'men', also match 'mens', 'men's', etc.
+            // For 'kids', also match 'kid', 'children', etc.
+            let flexibleMatches = [];
+            const category = props.category.toLowerCase();
+            
+            if (category === 'men') {
+              flexibleMatches = data.products.filter(p => 
+                p.category && 
+                (p.category.toLowerCase().includes('men') || 
+                 p.category.toLowerCase().includes('male'))
+              );
+            } else if (category === 'kids') {
+              flexibleMatches = data.products.filter(p => 
+                p.category && 
+                (p.category.toLowerCase().includes('kid') || 
+                 p.category.toLowerCase().includes('child') ||
+                 p.category.toLowerCase().includes('youth'))
+              );
+            } else if (category === 'women') {
+              flexibleMatches = data.products.filter(p => 
+                p.category && 
+                (p.category.toLowerCase().includes('women') || 
+                 p.category.toLowerCase().includes('female') ||
+                 p.category.toLowerCase().includes('lady'))
+              );
+            }
+            
+            console.log(`Flexible matching found ${flexibleMatches.length} products`);
+            setCategoryProducts(flexibleMatches);
+          }
         } else {
-          console.error('Error fetching from API:', data.message);
+          console.error('Error fetching products or no products returned');
           setCategoryProducts([]);
         }
       } catch (error) {
@@ -121,19 +77,13 @@ const ShopCategory = (props) => {
       }
     };
     
-    fetchProducts();
-  }, [props.category, allProducts]);
+    fetchAllProducts();
+  }, [props.category]);
 
   return (
     <div className="shop-category">
       <img src={props.banner} alt="Category Banner" className="shop-category-banner"/>
       
-      {/* Debug Banner */}
-      <div className="debug-info" style={{margin: '10px', padding: '10px', background: '#f0f0f0', display: 'none'}}>
-        <p>Category: "{props.category}"</p>
-        <p>Products found: {categoryProducts.length}</p>
-      </div>
-
       <div className="shop-category-index-sort">
         {/* Page Index */}
         <p>
@@ -166,7 +116,6 @@ const ShopCategory = (props) => {
           <div className="no-products-message">
             <h3>No products found in this category</h3>
             <p>We're working on adding new products to this category. Please check back soon!</p>
-            <p style={{fontSize: '12px', color: '#999'}}>Category: "{props.category}"</p>
           </div>
         )}
       </div>
