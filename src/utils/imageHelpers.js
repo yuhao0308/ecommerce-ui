@@ -7,9 +7,13 @@ import { API_URL } from '../config';
  */
 export const formatImageUrl = (imageUrl) => {
   if (!imageUrl) {
+    console.warn('Empty image URL provided');
     // Return a base64 encoded transparent 1x1 pixel as fallback
     return 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
   }
+  
+  // Debug the incoming image URL
+  console.debug('Formatting image URL:', imageUrl);
   
   // If it's already an absolute URL, return it as is
   if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
@@ -30,6 +34,11 @@ export const formatImageUrl = (imageUrl) => {
     return imageUrl.toString();
   }
   
-  // If it's a relative path, prepend the API URL
-  return `${API_URL}${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`;
+  // Ensure the string starts with a slash for consistent path joining
+  const normalizedPath = imageUrl.startsWith('/') ? imageUrl : `/${imageUrl}`;
+  // Create the full URL while ensuring no double slashes
+  const fullUrl = `${API_URL}${normalizedPath}`;
+  
+  console.debug('Formatted URL:', fullUrl);
+  return fullUrl;
 }; 

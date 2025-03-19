@@ -1,13 +1,28 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import "./Item.css"
 import {Link} from 'react-router-dom'
 import { formatImageUrl } from '../../utils/imageHelpers'
 
 const Item = (props) => {
   const [imgError, setImgError] = useState(false);
+  const [imageSrc, setImageSrc] = useState(null);
+  
+  useEffect(() => {
+    // Reset error state when image prop changes
+    setImgError(false);
+    
+    try {
+      const formattedUrl = formatImageUrl(props.image);
+      setImageSrc(formattedUrl);
+    } catch (error) {
+      console.error(`Error formatting image for ${props.name}:`, error);
+      setImgError(true);
+    }
+  }, [props.image, props.name]);
   
   // Create a fallback for when the image fails to load
   const handleImageError = (e) => {
+    console.error(`Image failed to load for ${props.name}:`, props.image);
     e.target.onerror = null; // Prevent infinite loop
     setImgError(true);
     // Use a simple base64 encoded gray image as fallback
@@ -18,11 +33,17 @@ const Item = (props) => {
     <div className="item">
       <div className="img-container">
         <Link to={`/product/${props.id}`}>
-          <img 
-            src={imgError ? null : formatImageUrl(props.image)} 
-            alt={props.name || "Product Item"}
-            onError={handleImageError}
-          />
+          {!imgError ? (
+            <img 
+              src={imageSrc} 
+              alt={props.name || "Product Item"}
+              onError={handleImageError}
+            />
+          ) : (
+            <div className="error-placeholder">
+              <p>{props.name}</p>
+            </div>
+          )}
         </Link>
       </div>
       <p>{props.name}</p>
