@@ -10,63 +10,19 @@ const ShopCategory = (props) => {
 
   // Direct fetch approach without context
   useEffect(() => {
-    const fetchAllProducts = async () => {
+    const fetchCategoryProducts = async () => {
       try {
         setIsLoading(true);
         
-        // Always fetch directly from API for most reliable results
-        const response = await fetch(`${API_URL}/products`);
+        // Fetch products by category directly from the API
+        const response = await fetch(`${API_URL}/products?category=${props.category}`);
         const data = await response.json();
         
         if (data.success && data.products && data.products.length > 0) {
-          console.log(`API returned ${data.products.length} total products`);
-          
-          // Try case-insensitive contains match instead of exact match
-          const matchingProducts = data.products.filter(product => 
-            product.category && 
-            product.category.toLowerCase().includes(props.category.toLowerCase())
-          );
-          
-          console.log(`Found ${matchingProducts.length} products matching category '${props.category}'`);
-          
-          if (matchingProducts.length > 0) {
-            setCategoryProducts(matchingProducts);
-          } else {
-            // Try a more flexible matching approach
-            console.log("Trying flexible matching...");
-            
-            // For 'men', also match 'mens', 'men's', etc.
-            // For 'kids', also match 'kid', 'children', etc.
-            let flexibleMatches = [];
-            const category = props.category.toLowerCase();
-            
-            if (category === 'men') {
-              flexibleMatches = data.products.filter(p => 
-                p.category && 
-                (p.category.toLowerCase().includes('men') || 
-                 p.category.toLowerCase().includes('male'))
-              );
-            } else if (category === 'kids') {
-              flexibleMatches = data.products.filter(p => 
-                p.category && 
-                (p.category.toLowerCase().includes('kid') || 
-                 p.category.toLowerCase().includes('child') ||
-                 p.category.toLowerCase().includes('youth'))
-              );
-            } else if (category === 'women') {
-              flexibleMatches = data.products.filter(p => 
-                p.category && 
-                (p.category.toLowerCase().includes('women') || 
-                 p.category.toLowerCase().includes('female') ||
-                 p.category.toLowerCase().includes('lady'))
-              );
-            }
-            
-            console.log(`Flexible matching found ${flexibleMatches.length} products`);
-            setCategoryProducts(flexibleMatches);
-          }
+          console.log(`API returned ${data.products.length} products for category '${props.category}'`);
+          setCategoryProducts(data.products);
         } else {
-          console.error('Error fetching products or no products returned');
+          console.error(`No products found for category '${props.category}'`);
           setCategoryProducts([]);
         }
       } catch (error) {
@@ -77,7 +33,7 @@ const ShopCategory = (props) => {
       }
     };
     
-    fetchAllProducts();
+    fetchCategoryProducts();
   }, [props.category]);
 
   return (
