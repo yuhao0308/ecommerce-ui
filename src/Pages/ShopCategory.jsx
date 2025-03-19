@@ -20,7 +20,7 @@ const ShopCategory = (props) => {
         // First try filtering from context
         const contextFiltered = allProducts.filter(item => 
           item.category && 
-          item.category.toLowerCase() === props.category.toLowerCase()
+          item.category.toLowerCase() === props.category.trim().toLowerCase()
         );
         
         console.log(`Found ${contextFiltered.length} matching products in context`);
