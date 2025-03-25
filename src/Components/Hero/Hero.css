@@ -124,3 +124,53 @@
     font-size: 1.8vh;
   }
 }
+
+/* Enhanced Mobile Responsiveness for Hero */
+@media screen and (max-width: 768px) {
+  .hero {
+    flex-direction: column-reverse; /* Reverse the order to show image first */
+    height: auto;
+    padding: 30px 15px;
+  }
+
+  .hero-right {
+    margin-bottom: 20px; /* Add space between image and text */
+  }
+  
+  .hero-right img {
+    max-height: 50vh; /* Limit image height on mobile */
+    margin-top: 10px;
+  }
+
+  .hero-left {
+    padding-left: 0;
+    align-items: center;
+    text-align: center;
+    gap: 15px;
+  }
+
+  .hero-left h2 {
+    font-size: 18px;
+  }
+
+  .hero-left p {
+    font-size: min(7vw, 36px);
+  }
+
+  .hero-hand-icon {
+    justify-content: center;
+  }
+
+  .hero-latest-btn {
+    width: 80%;
+    max-width: 250px;
+    height: 45px;
+    font-size: 16px;
+    margin-top: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .hero-latest-btn img {
+    width: 16px;
+  }
+}

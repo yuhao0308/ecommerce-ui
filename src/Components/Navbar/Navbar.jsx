@@ -91,17 +91,21 @@ const Navbar = () => {
       </div>
       <div className="second-layer">
         <ul className="nav-menu">
-          <li onClick={() => setMenu("shop")}>
-            <Link to="/">Shop</Link> {menu === "shop" && <hr />}
+          <li onClick={() => setMenu("shop")} className={menu === "shop" ? "active" : ""}>
+            <Link to="/">Shop</Link>
+            {menu === "shop" && <hr />}
           </li>
-          <li onClick={() => setMenu("men")}>
-            <Link to="/men">Men</Link> {menu === "men" && <hr />}
+          <li onClick={() => setMenu("men")} className={menu === "men" ? "active" : ""}>
+            <Link to="/men">Men</Link>
+            {menu === "men" && <hr />}
           </li>
-          <li onClick={() => setMenu("women")}>
-            <Link to="/women">Women</Link> {menu === "women" && <hr />}
+          <li onClick={() => setMenu("women")} className={menu === "women" ? "active" : ""}>
+            <Link to="/women">Women</Link>
+            {menu === "women" && <hr />}
           </li>
-          <li onClick={() => setMenu("kids")}>
-            <Link to="/kids">Kids</Link> {menu === "kids" && <hr />}
+          <li onClick={() => setMenu("kids")} className={menu === "kids" ? "active" : ""}>
+            <Link to="/kids">Kids</Link>
+            {menu === "kids" && <hr />}
           </li>
         </ul>
       </div>

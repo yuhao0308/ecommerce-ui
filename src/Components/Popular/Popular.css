@@ -50,4 +50,24 @@
     flex-direction: column;
     align-items: center;
   }
+  
+  .popular h1 {
+    font-size: 36px;
+    text-align: center;
+  }
+  
+  .popular hr {
+    width: 150px;
+    margin: 10px auto 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .popular h1 {
+    font-size: 28px;
+  }
+  
+  .popular hr {
+    width: 120px;
+  }
 }

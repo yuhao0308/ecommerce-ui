@@ -82,3 +82,66 @@
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
   background: linear-gradient(90deg, black, #333);
 }
+
+/* Add mobile responsiveness for the newsletter form */
+@media screen and (max-width: 768px) {
+  .newsletter {
+    height: auto;
+    padding: 40px 20px;
+  }
+  
+  .newsletter h1 {
+    font-size: 40px;
+    text-align: center;
+    line-height: 1.2;
+  }
+  
+  .newsletter div {
+    width: 100%; /* Full width on mobile */
+    max-width: 500px;
+    height: 60px; /* Slightly smaller height */
+    flex-direction: column; /* Stack for very small screens if needed */
+  }
+  
+  .newsletter input {
+    width: 60%; /* Adjust input width */
+    margin-left: 20px;
+    font-size: 16px;
+  }
+  
+  .newsletter div button {
+    width: 120px; /* Smaller button */
+    height: 60px;
+    font-size: 16px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .newsletter h1 {
+    font-size: 28px;
+    text-align: center;
+    line-height: 1.3;
+  }
+  
+  .newsletter p {
+    font-size: 16px;
+    text-align: center;
+  }
+  
+  .newsletter div {
+    height: 50px;
+    flex-direction: row; /* Keep row layout but smaller */
+  }
+  
+  .newsletter input {
+    width: 50%;
+    font-size: 14px;
+    margin-left: 15px;
+  }
+  
+  .newsletter div button {
+    width: 100px;
+    height: 50px;
+    font-size: 14px;
+  }
+}

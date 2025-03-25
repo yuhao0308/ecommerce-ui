@@ -59,3 +59,49 @@
   height: 3px;
   background: #c7c7c7;
 }
+
+/* Add mobile responsiveness for footer */
+@media screen and (max-width: 768px) {
+  .footer-logo p {
+    font-size: 36px;
+  }
+  
+  .footer-links {
+    gap: 30px;
+    font-size: 18px;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 0 20px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .footer {
+    gap: 30px;
+  }
+  
+  .footer-logo p {
+    font-size: 28px;
+  }
+  
+  .footer-links {
+    gap: 15px;
+    font-size: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .footer-social-icon {
+    gap: 15px;
+  }
+  
+  .footer-icons-container {
+    padding: 8px;
+    padding-bottom: 5px;
+  }
+  
+  .footer-copyright {
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+}
