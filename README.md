@@ -8,6 +8,8 @@ This is the customer-facing frontend for the E-Commerce platform. It provides a 
 
 **Live Demo**: [https://web-production-52db.up.railway.app/](https://web-production-52db.up.railway.app/)
 
+**Backend Repository**: [E-Commerce API](https://github.com/yuhao0308/ecommerce-api)
+
 ## Tech Stack
 
 - React
